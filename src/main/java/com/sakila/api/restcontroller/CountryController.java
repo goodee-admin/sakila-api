@@ -1,9 +1,12 @@
 package com.sakila.api.restcontroller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,6 +20,7 @@ import com.sakila.api.entity.CountryEntity;
 import com.sakila.api.service.CountryService;
 
 @RestController
+@CrossOrigin
 public class CountryController {
 	private CountryService countryService;
 	
@@ -39,7 +43,7 @@ public class CountryController {
 	
 	// 저장
 	@PostMapping("/country")
-	public ResponseEntity<String> country(@RequestBody CountryDto countryDto){
+	public ResponseEntity<Map<String, String>> country(@RequestBody CountryDto countryDto){
 		// @RequestBody json형태의 문자열 매개값을 CountryDto타입으로 변환시킨다.
 		
 		/*
@@ -48,7 +52,10 @@ public class CountryController {
 		*/
 		
 		countryService.save(countryDto);
-		return new ResponseEntity<String>("입력성공", HttpStatus.OK);
+		
+		Map<String, String> resultMap = new HashMap<String, String>();
+		resultMap.put("result", "입력성공");
+		return new ResponseEntity<Map<String, String>>(resultMap, HttpStatus.OK);
 	}
 	
 	// 수정
