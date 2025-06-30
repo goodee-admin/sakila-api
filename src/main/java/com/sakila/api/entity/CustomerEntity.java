@@ -46,7 +46,7 @@ public class CustomerEntity {
 	
 	@ManyToOne
 	@JoinColumn(name = "store_id")
-	private StoreEntiy storeEntity;
+	private StoreEntity storeEntity;
 	
 	@ManyToOne
 	@JoinColumn(name = "address_id")

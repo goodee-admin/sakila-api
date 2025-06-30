@@ -20,45 +20,53 @@ import com.sakila.api.service.CountryService;
 public class CountryController {
 	private CountryService countryService;
 	
-	// 필드주입 대신 생성자 주입을 사용
+	// 필드주입 대신 생성자 주입 사용
 	public CountryController(CountryService countryService) {
-		this.countryService = countryService;
+		this.countryService=countryService;
 	}
 	
-	@GetMapping("/country/{countryId}")
-	public ResponseEntity<CountryEntity> countryOne(@PathVariable int countryId) {
+	// 전체 조회
+	@GetMapping("/country")
+	public ResponseEntity<List<CountryEntity>> country(){
+		return new ResponseEntity<List<CountryEntity>>(countryService.findAll(), HttpStatus.OK);
+	}
+	
+	// 한 행 조회
+	@GetMapping("/countryOne/{countryId}")
+	public ResponseEntity<CountryEntity> countryOne(@PathVariable int countryId){
 		return new ResponseEntity<CountryEntity>(countryService.findById(countryId), HttpStatus.OK);
 	}
 	
+	// 저장
+	@PostMapping("/country")
+	public ResponseEntity<String> country(@RequestBody CountryDto countryDto){
+		// @RequestBody json형태의 문자열 매개값을 CountryDto타입으로 변환시킨다.
+		
+		/*
+		CountryDto에 작성한 entity변환 사용
+		CountryEntity countryEntity = countryDto.toEntity();
+		*/
+		
+		countryService.save(countryDto);
+		return new ResponseEntity<String>("입력성공", HttpStatus.OK);
+	}
+	
+	// 수정
+	@PatchMapping("/country")
+	public ResponseEntity<String> updateCountry(@RequestBody CountryDto countryDto){
+		countryService.update(countryDto);
+		return new ResponseEntity<String>("수정성공", HttpStatus.OK);
+	}
+		
 	// 삭제
 	@DeleteMapping("/country/{countryId}")
-	public ResponseEntity<String> deleteCountry(@PathVariable int countryId) {
+	public ResponseEntity<String> deleteCountry(@PathVariable int countryId){
+		boolean result = countryService.delete(countryId); 
 		
-		boolean result = countryService.delete(countryId);
 		if(result) {
 			return new ResponseEntity<String>("삭제성공", HttpStatus.OK);
 		}
 		return new ResponseEntity<String>("삭제실패", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
-	
-	// 수정
-	@PatchMapping("/country")
-	public ResponseEntity<String> updateCountry(@RequestBody CountryDto countryDto) {
-		countryService.update(countryDto);
-		return new ResponseEntity<String>("수정성공", HttpStatus.OK);
-	}
-	
-	// 입력
-	@PostMapping("/country")
-	public ResponseEntity<String> country(@RequestBody CountryDto countryDto) {
-		// @RequstBody json형태의 문자열 매개값을 CountryDto타입으로 변환시킨다.
-		System.out.println(countryDto.toString());
-		countryService.save(countryDto);
-		return new ResponseEntity<String>("입력성공", HttpStatus.CREATED);
-	}
-	
-	@GetMapping("/country")
-	public ResponseEntity<List<CountryEntity>> country() {
-		return new ResponseEntity<List<CountryEntity>>(countryService.findAll(), HttpStatus.OK);
-	}
+
 }

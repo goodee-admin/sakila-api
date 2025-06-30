@@ -12,38 +12,43 @@ import com.sakila.api.repository.CountryRepository;
 
 @Service
 @Transactional
+
 public class CountryService {
 	private CountryRepository countryRepository;
 	private CityRepository cityRepository;
 	
-	// 한행 조회
-	public CountryEntity findById(int countryId) {
-		return countryRepository.findById(countryId).orElse(null);
-	}
-	
-	// 전체 조회
-	public List<CountryEntity> findAll() {
-		return countryRepository.findAll();
-	}
-	
-	// 필드주입 대신 생성자 주입을 사용
+	// 필드주입대신 생성자 주입 Autowired 생략가능
 	public CountryService(CountryRepository countryRepository, CityRepository cityRepository) {
 		this.countryRepository = countryRepository;
 		this.cityRepository = cityRepository;
 	}
 	
-	// country 삭제
-	public boolean delete(int countryId) {
-		// 자식테이블에 참조하는 행이 없다면 (select count(*) from city where country_id
-		// 이슈 : 자식테이블에 외래키로 참조하는 행이 있다면?
-		if(0 == cityRepository.countByCountryEntity(countryRepository.findById(countryId).orElse(null))) {
-			countryRepository.deleteById(countryId);
-			return true;
-		}
-		return false;
+	// 한 행 조회
+	public CountryEntity findById(int countryId) {
+		return countryRepository.findById(countryId).orElse(null);
 	}
 	
-	// country 수정
+	// 전체 조회
+	public List<CountryEntity> findAll(){
+		return countryRepository.findAll();
+	}
+		
+	// 삭제
+	public boolean delete(int countryId) {
+		// 자식테이블에 외래키로 참조하는 행이 있는지 검사
+		CountryEntity countryEntity = countryRepository.findById(countryId).orElse(null);
+		
+		// 자식테이블에 외래키로 참조하는 행이 있다면
+		if(cityRepository.countByCountryEntity(countryEntity) != 0) {
+			System.out.println("자식테이블에 외래키로 참조하는 행이 있습니다.");
+			return false;
+		}
+		// 자식테이블에 참조하는 행이 없다면(select count(*) from city where country_id=countryId)
+		countryRepository.deleteById(countryId);
+		return true;
+	}
+	
+	// 수정
 	public void update(CountryDto countryDto) {
 		CountryEntity updateCountryEntity = countryRepository.findById(countryDto.getCountryId()).orElse(null);
 		updateCountryEntity.setCountry(countryDto.getCountry());
@@ -51,11 +56,11 @@ public class CountryService {
 	
 	// CountryEntity 입력
 	public void save(CountryDto countryDto) {
+		// 직접 Dto를 entity로 변환
 		CountryEntity saveCountryEntity = new CountryEntity();
 		saveCountryEntity.setCountry(countryDto.getCountry());
+		
 		countryRepository.save(saveCountryEntity);
 	}
-	
-
 	
 }

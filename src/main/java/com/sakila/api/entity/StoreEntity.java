@@ -21,7 +21,7 @@ import lombok.Setter;
 @DynamicInsert
 @Getter
 @Setter
-public class StoreEntiy {
+public class StoreEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "store_id")
