@@ -16,6 +16,16 @@ public class CountryService {
 	private CountryRepository countryRepository;
 	private CityRepository cityRepository;
 	
+	// 한행 조회
+	public CountryEntity findById(int countryId) {
+		return countryRepository.findById(countryId).orElse(null);
+	}
+	
+	// 전체 조회
+	public List<CountryEntity> findAll() {
+		return countryRepository.findAll();
+	}
+	
 	// 필드주입 대신 생성자 주입을 사용
 	public CountryService(CountryRepository countryRepository, CityRepository cityRepository) {
 		this.countryRepository = countryRepository;
@@ -46,9 +56,6 @@ public class CountryService {
 		countryRepository.save(saveCountryEntity);
 	}
 	
-	// 전체조회
-	public List<CountryEntity> findAll() {
-		return countryRepository.findAll();
-	}
+
 	
 }

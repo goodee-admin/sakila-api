@@ -25,6 +25,11 @@ public class CountryController {
 		this.countryService = countryService;
 	}
 	
+	@GetMapping("/country/{countryId}")
+	public ResponseEntity<CountryEntity> countryOne(@PathVariable int countryId) {
+		return new ResponseEntity<CountryEntity>(countryService.findById(countryId), HttpStatus.OK);
+	}
+	
 	// 삭제
 	@DeleteMapping("/country/{countryId}")
 	public ResponseEntity<String> deleteCountry(@PathVariable int countryId) {
