@@ -1,9 +1,9 @@
 package com.sakila.api.restcontroller;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,10 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.sakila.api.dto.CountryDto;
 import com.sakila.api.entity.CountryEntity;
+import com.sakila.api.entity.CountryMapping;
 import com.sakila.api.service.CountryService;
 
 @RestController
-@CrossOrigin
+@CrossOrigin()
 public class CountryController {
 	private CountryService countryService;
 	
@@ -30,9 +31,9 @@ public class CountryController {
 	}
 	
 	// 전체 조회
-	@GetMapping("/country")
-	public ResponseEntity<List<CountryEntity>> country(){
-		return new ResponseEntity<List<CountryEntity>>(countryService.findAll(), HttpStatus.OK);
+	@GetMapping("/countryList/{currentPage}")
+	public ResponseEntity<Page<CountryMapping>> country(@PathVariable int currentPage){
+		return new ResponseEntity<Page<CountryMapping>>(countryService.findAll(currentPage), HttpStatus.OK);
 	}
 	
 	// 한 행 조회
@@ -50,6 +51,8 @@ public class CountryController {
 		CountryDto에 작성한 entity변환 사용
 		CountryEntity countryEntity = countryDto.toEntity();
 		*/
+		System.out.println("countryDto:"+countryDto);
+		
 		
 		countryService.save(countryDto);
 		
@@ -61,6 +64,7 @@ public class CountryController {
 	// 수정
 	@PatchMapping("/country")
 	public ResponseEntity<String> updateCountry(@RequestBody CountryDto countryDto){
+		System.out.println("countryDto:"+countryDto);
 		countryService.update(countryDto);
 		return new ResponseEntity<String>("수정성공", HttpStatus.OK);
 	}
